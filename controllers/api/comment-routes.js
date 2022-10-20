@@ -11,6 +11,18 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/', (req, res) => {
+  // Access the Comment model and run .findAll() method to get all comments
+  Comment.findAll()
+    // return the data as JSON formatted
+    .then(dbCommentData => res.json(dbCommentData))
+    // if there is a server error, return that error
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
 router.post('/', withAuth, (req, res) => {
   // expects => {comment_text: "This is the comment", user_id: 1, post_id: 2}
   Comment.create({
@@ -31,17 +43,16 @@ router.delete('/:id', withAuth, (req, res) => {
       id: req.params.id
     }
   })
-    .then(dbCommentData => {
-      if (!dbCommentData) {
-        res.status(404).json({ message: 'No comment found with this id!' });
+    .then(dbPostData => {
+      if (!dbPostData) {
+        res.status(404).json({ message: 'No comment found' });
         return;
       }
-      res.json(dbCommentData);
+      res.json(dbPostData);
     })
     .catch(err => {
       console.log(err);
       res.status(500).json(err);
     });
 });
-
 module.exports = router;
